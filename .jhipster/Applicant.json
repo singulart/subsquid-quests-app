@@ -1,0 +1,26 @@
+{
+  "changelogDate": "20220208230453",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "discordHandle",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "Applicant",
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityField": "title",
+      "otherEntityName": "quest",
+      "otherEntityRelationshipName": "applicant",
+      "ownerSide": true,
+      "relationshipName": "quest",
+      "relationshipType": "many-to-many"
+    }
+  ],
+  "service": "serviceImpl"
+}
