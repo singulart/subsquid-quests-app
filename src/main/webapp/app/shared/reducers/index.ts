@@ -11,9 +11,9 @@ import password from 'app/modules/account/password/password.reducer';
 import settings from 'app/modules/account/settings/settings.reducer';
 import passwordReset from 'app/modules/account/password-reset/password-reset.reducer';
 // prettier-ignore
-import quest from 'app/entities/quest/quest.reducer';
-// prettier-ignore
 import applicant from 'app/entities/applicant/applicant.reducer';
+// prettier-ignore
+import quest from 'app/entities/quest/quest.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 const rootReducer = {
@@ -26,8 +26,8 @@ const rootReducer = {
   passwordReset,
   password,
   settings,
-  quest,
   applicant,
+  quest,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar,
 };

@@ -4,8 +4,6 @@ import java.util.Optional;
 import net.subsquid.quest.domain.Quest;
 import net.subsquid.quest.repository.QuestRepository;
 import net.subsquid.quest.service.QuestService;
-import net.subsquid.quest.service.dto.QuestDTO;
-import net.subsquid.quest.service.mapper.QuestMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -24,48 +22,72 @@ public class QuestServiceImpl implements QuestService {
 
     private final QuestRepository questRepository;
 
-    private final QuestMapper questMapper;
-
-    public QuestServiceImpl(QuestRepository questRepository, QuestMapper questMapper) {
+    public QuestServiceImpl(QuestRepository questRepository) {
         this.questRepository = questRepository;
-        this.questMapper = questMapper;
     }
 
     @Override
-    public QuestDTO save(QuestDTO questDTO) {
-        log.debug("Request to save Quest : {}", questDTO);
-        Quest quest = questMapper.toEntity(questDTO);
-        quest = questRepository.save(quest);
-        return questMapper.toDto(quest);
+    public Quest save(Quest quest) {
+        log.debug("Request to save Quest : {}", quest);
+        return questRepository.save(quest);
     }
 
     @Override
-    public Optional<QuestDTO> partialUpdate(QuestDTO questDTO) {
-        log.debug("Request to partially update Quest : {}", questDTO);
+    public Optional<Quest> partialUpdate(Quest quest) {
+        log.debug("Request to partially update Quest : {}", quest);
 
         return questRepository
-            .findById(questDTO.getId())
+            .findById(quest.getId())
             .map(existingQuest -> {
-                questMapper.partialUpdate(existingQuest, questDTO);
+                if (quest.getTitle() != null) {
+                    existingQuest.setTitle(quest.getTitle());
+                }
+                if (quest.getDescription() != null) {
+                    existingQuest.setDescription(quest.getDescription());
+                }
+                if (quest.getReward() != null) {
+                    existingQuest.setReward(quest.getReward());
+                }
+                if (quest.getExpiresOn() != null) {
+                    existingQuest.setExpiresOn(quest.getExpiresOn());
+                }
+                if (quest.getReviewStartDate() != null) {
+                    existingQuest.setReviewStartDate(quest.getReviewStartDate());
+                }
+                if (quest.getMaxApplicants() != null) {
+                    existingQuest.setMaxApplicants(quest.getMaxApplicants());
+                }
+                if (quest.getAssignee() != null) {
+                    existingQuest.setAssignee(quest.getAssignee());
+                }
+                if (quest.getStatus() != null) {
+                    existingQuest.setStatus(quest.getStatus());
+                }
+                if (quest.getPrivateNotes() != null) {
+                    existingQuest.setPrivateNotes(quest.getPrivateNotes());
+                }
 
                 return existingQuest;
             })
-            .map(questRepository::save)
-            .map(questMapper::toDto);
+            .map(questRepository::save);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<QuestDTO> findAll(Pageable pageable) {
+    public Page<Quest> findAll(Pageable pageable) {
         log.debug("Request to get all Quests");
-        return questRepository.findAll(pageable).map(questMapper::toDto);
+        return questRepository.findAll(pageable);
+    }
+
+    public Page<Quest> findAllWithEagerRelationships(Pageable pageable) {
+        return questRepository.findAllWithEagerRelationships(pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<QuestDTO> findOne(Long id) {
+    public Optional<Quest> findOne(Long id) {
         log.debug("Request to get Quest : {}", id);
-        return questRepository.findById(id).map(questMapper::toDto);
+        return questRepository.findOneWithEagerRelationships(id);
     }
 
     @Override

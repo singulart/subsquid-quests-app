@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { IApplicant } from 'app/shared/model/applicant.model';
 import { QuestStatus } from 'app/shared/model/enumerations/quest-status.model';
 
 export interface IQuest {
@@ -10,8 +11,9 @@ export interface IQuest {
   reviewStartDate?: string;
   maxApplicants?: number;
   assignee?: string | null;
-  status?: QuestStatus | null;
+  status?: QuestStatus;
   privateNotes?: string | null;
+  applicants?: IApplicant[] | null;
 }
 
 export const defaultValue: Readonly<IQuest> = {};

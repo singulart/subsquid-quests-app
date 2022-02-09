@@ -65,6 +65,17 @@ export const QuestDetail = (props: RouteComponentProps<{ id: string }>) => {
             <span id="privateNotes">Private Notes</span>
           </dt>
           <dd>{questEntity.privateNotes}</dd>
+          <dt>Applicant</dt>
+          <dd>
+            {questEntity.applicants
+              ? questEntity.applicants.map((val, i) => (
+                  <span key={val.id}>
+                    <a>{val.discordHandle}</a>
+                    {questEntity.applicants && i === questEntity.applicants.length - 1 ? '' : ', '}
+                  </span>
+                ))
+              : null}
+          </dd>
         </dl>
         <Button tag={Link} to="/quest" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>

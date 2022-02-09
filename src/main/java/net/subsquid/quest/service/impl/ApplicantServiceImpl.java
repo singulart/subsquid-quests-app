@@ -4,8 +4,6 @@ import java.util.Optional;
 import net.subsquid.quest.domain.Applicant;
 import net.subsquid.quest.repository.ApplicantRepository;
 import net.subsquid.quest.service.ApplicantService;
-import net.subsquid.quest.service.dto.ApplicantDTO;
-import net.subsquid.quest.service.mapper.ApplicantMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -24,52 +22,44 @@ public class ApplicantServiceImpl implements ApplicantService {
 
     private final ApplicantRepository applicantRepository;
 
-    private final ApplicantMapper applicantMapper;
-
-    public ApplicantServiceImpl(ApplicantRepository applicantRepository, ApplicantMapper applicantMapper) {
+    public ApplicantServiceImpl(ApplicantRepository applicantRepository) {
         this.applicantRepository = applicantRepository;
-        this.applicantMapper = applicantMapper;
     }
 
     @Override
-    public ApplicantDTO save(ApplicantDTO applicantDTO) {
-        log.debug("Request to save Applicant : {}", applicantDTO);
-        Applicant applicant = applicantMapper.toEntity(applicantDTO);
-        applicant = applicantRepository.save(applicant);
-        return applicantMapper.toDto(applicant);
+    public Applicant save(Applicant applicant) {
+        log.debug("Request to save Applicant : {}", applicant);
+        return applicantRepository.save(applicant);
     }
 
     @Override
-    public Optional<ApplicantDTO> partialUpdate(ApplicantDTO applicantDTO) {
-        log.debug("Request to partially update Applicant : {}", applicantDTO);
+    public Optional<Applicant> partialUpdate(Applicant applicant) {
+        log.debug("Request to partially update Applicant : {}", applicant);
 
         return applicantRepository
-            .findById(applicantDTO.getId())
+            .findById(applicant.getId())
             .map(existingApplicant -> {
-                applicantMapper.partialUpdate(existingApplicant, applicantDTO);
+                if (applicant.getDiscordHandle() != null) {
+                    existingApplicant.setDiscordHandle(applicant.getDiscordHandle());
+                }
 
                 return existingApplicant;
             })
-            .map(applicantRepository::save)
-            .map(applicantMapper::toDto);
+            .map(applicantRepository::save);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ApplicantDTO> findAll(Pageable pageable) {
+    public Page<Applicant> findAll(Pageable pageable) {
         log.debug("Request to get all Applicants");
-        return applicantRepository.findAll(pageable).map(applicantMapper::toDto);
-    }
-
-    public Page<ApplicantDTO> findAllWithEagerRelationships(Pageable pageable) {
-        return applicantRepository.findAllWithEagerRelationships(pageable).map(applicantMapper::toDto);
+        return applicantRepository.findAll(pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<ApplicantDTO> findOne(Long id) {
+    public Optional<Applicant> findOne(Long id) {
         log.debug("Request to get Applicant : {}", id);
-        return applicantRepository.findOneWithEagerRelationships(id).map(applicantMapper::toDto);
+        return applicantRepository.findById(id);
     }
 
     @Override

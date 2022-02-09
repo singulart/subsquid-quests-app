@@ -2,6 +2,8 @@ package net.subsquid.quest.domain;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import net.subsquid.quest.domain.enumeration.QuestStatus;
@@ -41,19 +43,28 @@ public class Quest implements Serializable {
     private LocalDate reviewStartDate;
 
     @NotNull
-    @Min(value = 0)
+    @Min(value = 1)
     @Column(name = "max_applicants", nullable = false)
     private Integer maxApplicants;
 
     @Column(name = "assignee")
     private String assignee;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     private QuestStatus status;
 
     @Column(name = "private_notes")
     private String privateNotes;
+
+    @ManyToMany
+    @JoinTable(
+        name = "rel_quest__applicant",
+        joinColumns = @JoinColumn(name = "quest_id"),
+        inverseJoinColumns = @JoinColumn(name = "applicant_id")
+    )
+    private Set<Applicant> applicants = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -185,6 +196,29 @@ public class Quest implements Serializable {
 
     public void setPrivateNotes(String privateNotes) {
         this.privateNotes = privateNotes;
+    }
+
+    public Set<Applicant> getApplicants() {
+        return this.applicants;
+    }
+
+    public void setApplicants(Set<Applicant> applicants) {
+        this.applicants = applicants;
+    }
+
+    public Quest applicants(Set<Applicant> applicants) {
+        this.setApplicants(applicants);
+        return this;
+    }
+
+    public Quest addApplicant(Applicant applicant) {
+        this.applicants.add(applicant);
+        return this;
+    }
+
+    public Quest removeApplicant(Applicant applicant) {
+        this.applicants.remove(applicant);
+        return this;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

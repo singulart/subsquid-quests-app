@@ -9,7 +9,7 @@
     <!--
         Added the entity Applicant.
     -->
-    <changeSet id="20220208230453-1" author="jhipster">
+    <changeSet id="20220209080435-1" author="jhipster">
         <createTable tableName="applicant">
             <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
@@ -19,20 +19,6 @@
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
-    </changeSet>
-
-    <changeSet id="20220208230453-1-relations" author="jhipster">
-
-        <createTable tableName="rel_applicant__quest">
-            <column name="quest_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="applicant_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <addPrimaryKey columnNames="applicant_id, quest_id" tableName="rel_applicant__quest"/>
     </changeSet>
 
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
@@ -45,7 +31,7 @@
           This can be customized by adding or removing 'faker' in the 'spring.liquibase.contexts'
           Spring Boot configuration key.
     -->
-    <changeSet id="20220208230453-1-data" author="jhipster" context="faker">
+    <changeSet id="20220209080435-1-data" author="jhipster" context="faker">
         <loadData
                   file="config/liquibase/fake-data/applicant.csv"
                   separator=";"

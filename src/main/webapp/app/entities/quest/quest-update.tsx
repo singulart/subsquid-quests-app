@@ -4,6 +4,8 @@ import { Button, Row, Col, FormText } from 'reactstrap';
 import { isNumber, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { IApplicant } from 'app/shared/model/applicant.model';
+import { getEntities as getApplicants } from 'app/entities/applicant/applicant.reducer';
 import { getEntity, updateEntity, createEntity, reset } from './quest.reducer';
 import { IQuest } from 'app/shared/model/quest.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
@@ -16,6 +18,7 @@ export const QuestUpdate = (props: RouteComponentProps<{ id: string }>) => {
 
   const [isNew] = useState(!props.match.params || !props.match.params.id);
 
+  const applicants = useAppSelector(state => state.applicant.entities);
   const questEntity = useAppSelector(state => state.quest.entity);
   const loading = useAppSelector(state => state.quest.loading);
   const updating = useAppSelector(state => state.quest.updating);
@@ -31,6 +34,8 @@ export const QuestUpdate = (props: RouteComponentProps<{ id: string }>) => {
     } else {
       dispatch(getEntity(props.match.params.id));
     }
+
+    dispatch(getApplicants({}));
   }, []);
 
   useEffect(() => {
@@ -43,6 +48,7 @@ export const QuestUpdate = (props: RouteComponentProps<{ id: string }>) => {
     const entity = {
       ...questEntity,
       ...values,
+      applicants: mapIdList(values.applicants),
     };
 
     if (isNew) {
@@ -58,6 +64,7 @@ export const QuestUpdate = (props: RouteComponentProps<{ id: string }>) => {
       : {
           status: 'OPEN',
           ...questEntity,
+          applicants: questEntity?.applicants?.map(e => e.id.toString()),
         };
 
   return (
@@ -125,7 +132,7 @@ export const QuestUpdate = (props: RouteComponentProps<{ id: string }>) => {
                 type="text"
                 validate={{
                   required: { value: true, message: 'This field is required.' },
-                  min: { value: 0, message: 'This field should be at least 0.' },
+                  min: { value: 1, message: 'This field should be at least 1.' },
                   validate: v => isNumber(v) || 'This field should be a number.',
                 }}
               />
@@ -138,6 +145,16 @@ export const QuestUpdate = (props: RouteComponentProps<{ id: string }>) => {
                 ))}
               </ValidatedField>
               <ValidatedField label="Private Notes" id="quest-privateNotes" name="privateNotes" data-cy="privateNotes" type="text" />
+              <ValidatedField label="Applicant" id="quest-applicant" data-cy="applicant" type="select" multiple name="applicants">
+                <option value="" key="0" />
+                {applicants
+                  ? applicants.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.discordHandle}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/quest" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;
