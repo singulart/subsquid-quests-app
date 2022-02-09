@@ -1,5 +1,6 @@
 package net.subsquid.quest.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -64,6 +65,7 @@ public class Quest implements Serializable {
         joinColumns = @JoinColumn(name = "quest_id"),
         inverseJoinColumns = @JoinColumn(name = "applicant_id")
     )
+    @JsonIgnoreProperties(value = { "quests" }, allowSetters = true)
     private Set<Applicant> applicants = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -213,11 +215,13 @@ public class Quest implements Serializable {
 
     public Quest addApplicant(Applicant applicant) {
         this.applicants.add(applicant);
+        applicant.getQuests().add(this);
         return this;
     }
 
     public Quest removeApplicant(Applicant applicant) {
         this.applicants.remove(applicant);
+        applicant.getQuests().remove(this);
         return this;
     }
 

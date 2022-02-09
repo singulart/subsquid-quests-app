@@ -1,6 +1,9 @@
 package net.subsquid.quest.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
@@ -22,6 +25,15 @@ public class Applicant implements Serializable {
     @NotNull
     @Column(name = "discord_handle", nullable = false)
     private String discordHandle;
+
+    @ManyToMany
+    @JoinTable(
+        name = "rel_quest__applicant",
+        joinColumns = @JoinColumn(name = "applicant_id"),
+        inverseJoinColumns = @JoinColumn(name = "quest_id")
+    )
+    @JsonIgnoreProperties(value = { "applicants" }, allowSetters = true)
+    private Set<Quest> quests = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -49,6 +61,31 @@ public class Applicant implements Serializable {
 
     public void setDiscordHandle(String discordHandle) {
         this.discordHandle = discordHandle;
+    }
+
+    public Set<Quest> getQuests() {
+        return this.quests;
+    }
+
+    public void setQuests(Set<Quest> quests) {
+        this.quests = quests;
+    }
+
+    public Applicant quests(Set<Quest> quests) {
+        this.setQuests(quests);
+        return this;
+    }
+
+    public Applicant addQuest(Quest quest) {
+        this.quests.add(quest);
+        quest.getApplicants().add(this);
+        return this;
+    }
+
+    public Applicant removeQuest(Quest quest) {
+        this.quests.remove(quest);
+        quest.getApplicants().remove(this);
+        return this;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

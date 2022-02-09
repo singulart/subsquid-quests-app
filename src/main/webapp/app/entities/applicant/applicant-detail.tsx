@@ -29,6 +29,17 @@ export const ApplicantDetail = (props: RouteComponentProps<{ id: string }>) => {
             <span id="discordHandle">Discord Handle</span>
           </dt>
           <dd>{applicantEntity.discordHandle}</dd>
+          <dt>Quest</dt>
+          <dd>
+            {applicantEntity.quests
+              ? applicantEntity.quests.map((val, i) => (
+                  <span key={val.id}>
+                    <a>{val.title}</a>
+                    {applicantEntity.quests && i === applicantEntity.quests.length - 1 ? '' : ', '}
+                  </span>
+                ))
+              : null}
+          </dd>
         </dl>
         <Button tag={Link} to="/applicant" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>

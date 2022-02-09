@@ -12,6 +12,15 @@
   "name": "Applicant",
   "pagination": "pagination",
   "readOnly": false,
-  "relationships": [],
+  "relationships": [
+    {
+      "otherEntityField": "title",
+      "otherEntityName": "quest",
+      "otherEntityRelationshipName": "applicant",
+      "ownerSide": true,
+      "relationshipName": "quest",
+      "relationshipType": "many-to-many"
+    }
+  ],
   "service": "serviceImpl"
 }

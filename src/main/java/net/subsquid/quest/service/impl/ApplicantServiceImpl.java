@@ -55,11 +55,15 @@ public class ApplicantServiceImpl implements ApplicantService {
         return applicantRepository.findAll(pageable);
     }
 
+    public Page<Applicant> findAllWithEagerRelationships(Pageable pageable) {
+        return applicantRepository.findAllWithEagerRelationships(pageable);
+    }
+
     @Override
     @Transactional(readOnly = true)
     public Optional<Applicant> findOne(Long id) {
         log.debug("Request to get Applicant : {}", id);
-        return applicantRepository.findById(id);
+        return applicantRepository.findOneWithEagerRelationships(id);
     }
 
     @Override

@@ -4,6 +4,8 @@ import { Button, Row, Col, FormText } from 'reactstrap';
 import { isNumber, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { IQuest } from 'app/shared/model/quest.model';
+import { getEntities as getQuests } from 'app/entities/quest/quest.reducer';
 import { getEntity, updateEntity, createEntity, reset } from './applicant.reducer';
 import { IApplicant } from 'app/shared/model/applicant.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
@@ -15,6 +17,7 @@ export const ApplicantUpdate = (props: RouteComponentProps<{ id: string }>) => {
 
   const [isNew] = useState(!props.match.params || !props.match.params.id);
 
+  const quests = useAppSelector(state => state.quest.entities);
   const applicantEntity = useAppSelector(state => state.applicant.entity);
   const loading = useAppSelector(state => state.applicant.loading);
   const updating = useAppSelector(state => state.applicant.updating);
@@ -29,6 +32,8 @@ export const ApplicantUpdate = (props: RouteComponentProps<{ id: string }>) => {
     } else {
       dispatch(getEntity(props.match.params.id));
     }
+
+    dispatch(getQuests({}));
   }, []);
 
   useEffect(() => {
@@ -41,6 +46,7 @@ export const ApplicantUpdate = (props: RouteComponentProps<{ id: string }>) => {
     const entity = {
       ...applicantEntity,
       ...values,
+      quests: mapIdList(values.quests),
     };
 
     if (isNew) {
@@ -55,6 +61,7 @@ export const ApplicantUpdate = (props: RouteComponentProps<{ id: string }>) => {
       ? {}
       : {
           ...applicantEntity,
+          quests: applicantEntity?.quests?.map(e => e.id.toString()),
         };
 
   return (
@@ -83,6 +90,16 @@ export const ApplicantUpdate = (props: RouteComponentProps<{ id: string }>) => {
                   required: { value: true, message: 'This field is required.' },
                 }}
               />
+              <ValidatedField label="Quest" id="applicant-quest" data-cy="quest" type="select" multiple name="quests">
+                <option value="" key="0" />
+                {quests
+                  ? quests.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.title}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/applicant" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;
